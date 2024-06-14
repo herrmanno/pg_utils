@@ -1,0 +1,6 @@
+#/usr/bin/env bash
+_pg_rollback_completions() {
+	COMPREPLY=$(compgen -W "$(psql -A -t -c '\l' postgres | cut -d'|' -f1 | sort)" "${COMP_WORDS[1]}")
+}
+
+complete -F _pg_rollback_completions pg_rollback

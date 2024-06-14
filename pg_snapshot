@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -euo pipefail
+
+usage() {
+	printf "USAGE\n"
+	printf "pg_snapshot <database>"
+}
+
+if [ "$#" -ne 1 ] && [ "$#" -ne 2 ]; then
+	usage
+	exit
+fi
+
+SRC_DB="$1"; shift 
+TIMESTAMP=$(date +%Y-%m-%d-%H-%M)
+DST_DB="${SRC_DB}_${1:-"$TIMESTAMP"}"
+
+createdb -T "$SRC_DB" "$DST_DB"
+
+printf "Created backup database '%s'" "$DST_DB"

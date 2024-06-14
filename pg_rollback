@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -euo pipefail
+
+usage() {
+	printf "USAGE\n"
+	printf "pg_rollback <snapshot_database> [target_database]"
+}
+
+if [ "$#" -ne 1 ] && [ "$#" -ne 2 ]; then
+	usage
+	exit
+fi
+
+SRC_DB="$1"; shift 
+TARGET_DB=$(printf "$SRC_DB" | cut -d_ -f1)
+DST_DB="${1:-"$TARGET_DB"}"
+
+printf "Restoring '%s' from '%s'? [y/N]\n" "$DST_DB" "$SRC_DB"
+
+read -r CONFIRM
+
+if [ "$CONFIRM" != "y" ]; then
+	printf "Aborting"
+	exit 0
+fi
+
+dropdb "$DST_DB" || true
+createdb -T "$SRC_DB" "$DST_DB" 
+
+printf "Restored '%s' from '%s'" "$DST_DB" "$SRC_DB"

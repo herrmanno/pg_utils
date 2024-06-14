@@ -1,0 +1,6 @@
+#/usr/bin/env bash
+_pg_snapshot_completions() {
+	COMPREPLY=$(compgen -W "$(psql -A -t -c '\l' postgres | cut -d'|' -f1 | sort)" "${COMP_WORDS[1]}")
+}
+
+complete -F _pg_snapshot_completions pg_snapshot
